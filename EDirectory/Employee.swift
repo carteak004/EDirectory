@@ -10,5 +10,27 @@ import UIKit
 
 class Employee: NSObject {
     
+    var gender:String!
+    var name:[String]!
+    var location:[String]!
+    var email:String!
+    var dob:String!
+    var phone:String!
+    var cell:String!
+    var thumbnailPic:String!
+    var largePic:String!
+    var nat:String!
     
+    init(gender:String!, name:[String]!, location:[String]!, email:String!, dob:String!, phone:String!, cell:String!, thumbnailPic:String!, largePic:String!, nat:String!) {
+        self.gender = gender
+        self.name = name
+        self.largePic = largePic
+        self.location = location
+        self.email = email
+        self.dob = dob
+        self.phone = phone
+        self.cell = cell
+        self.thumbnailPic = thumbnailPic
+        self.nat = nat
+    }
 }

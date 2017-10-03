@@ -10,9 +10,13 @@ import UIKit
 
 class TableViewController: UITableViewController {
 
+    //MARK: - Variable Declarations
+    var employeeRecords = [Employee]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        fetchEmployeeRecords()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -24,7 +28,58 @@ class TableViewController: UITableViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    //MARK: - User Defined function for fetching JSON Data
+    func fetchEmployeeRecords()
+    {
+        let apiUrl = URL(string: "http://faculty.cs.niu.edu/~krush/ios/edirectory_json") // create URL Variable
+        let urlRequest = URLRequest(url: apiUrl!)
+        
+        //submit a request to fetch data
+        let task = URLSession.shared.dataTask(with: urlRequest)
+        {
+            (data,response,error) in
+            //if there is an error, print it onto console and don't continue
+            if error != nil {
+                print(error!)
+                return
+            }
+            
+            //if there is no error, fetch json content
+            if let content = data
+            {
+                do
+                {
+                    let jsonObject = try JSONSerialization.jsonObject(with: content, options: JSONSerialization.ReadingOptions.mutableContainers) as AnyObject
+                    
+                    //fetch required data
+                    if let employeeJson = jsonObject["results"] as? [[String:AnyObject]] {
+                        for item in employeeJson
+                        {
+                            if let gender = item["gender"] as? String, let name = item["name"] as? [String], let location = item["location"] as? [String], let email = item["email"] as? String, let dob = item["dob"] as? String, let phone = item["phone"] as? String, let cell = item["cell"] as? String, let thumbnailPic = item["thumbnailPic"] as? String, let largePic = item["largePic"] as? String, let nat = item["nat"] as? String
+                            {
+                                self.employeeRecords.append(Employee(gender: gender, name: name, location: location, email: email, dob: dob, phone: phone, cell: cell, thumbnailPic: thumbnailPic, largePic: largePic, nat: nat))
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    print(error)
+                }
+            }
+        }
+        task.resume()
+    }
 
+    //Function to load image from URL in a imageView. It takes the url as input and returns UIImage
+    func loadImage(imageUrl:String) -> UIImage
+    {
+        let url = URL(string: imageUrl)
+        let data = try? Data(contentsOf: url!)
+        
+        return UIImage(data: data!)!
+    }
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -34,18 +89,24 @@ class TableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return self.employeeRecords.count
     }
 
-    /*
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CELL", for: indexPath) as! TableViewCell
 
+        let employeeRecord = employeeRecords[indexPath.row]
+        
         // Configure the cell...
+        cell.nameLabel.text = "\(employeeRecord.name[0]). \(employeeRecord.name[1]) \(employeeRecord.name[2])"
+        cell.emailLabel.text = employeeRecord.email
+        cell.thumbnailPic.image = loadImage(imageUrl: employeeRecord.thumbnailPic)
+        
 
         return cell
     }
-    */
+    
 
     /*
     // Override to support conditional editing of the table view.
