@@ -17,6 +17,7 @@ class TableViewController: UITableViewController {
         super.viewDidLoad()
         
         fetchEmployeeRecords()
+        self.tableView.reloadData()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -54,14 +55,22 @@ class TableViewController: UITableViewController {
                     
                     //fetch required data
                     if let employeeJson = jsonObject["results"] as? [[String:AnyObject]] {
+                        var i=0
                         for item in employeeJson
                         {
-                            if let gender = item["gender"] as? String, let name = item["name"] as? [String], let location = item["location"] as? [String], let email = item["email"] as? String, let dob = item["dob"] as? String, let phone = item["phone"] as? String, let cell = item["cell"] as? String, let thumbnailPic = item["thumbnailPic"] as? String, let largePic = item["largePic"] as? String, let nat = item["nat"] as? String
+                            i = i+1
+                            //print("coming in")
+                            if let name = item["name"] as? [String:AnyObject]
+                                //let gender = item["gender"] as? String, , let location = item["location"] as? [String], let email = item["email"] as? String, let dob = item["dob"] as? String, let phone = item["phone"] as? String, let cell = item["cell"] as? String, let pic = item["picture"] as? [String], let nat = item["nat"] as? String
                             {
-                                self.employeeRecords.append(Employee(gender: gender, name: name, location: location, email: email, dob: dob, phone: phone, cell: cell, thumbnailPic: thumbnailPic, largePic: largePic, nat: nat))
+                                //print("just")
+                                //self.employeeRecords.append(Employee(gender: gender, name: name, location: location, email: email, dob: dob, phone: phone, cell: cell, thumbnailPic: pic[2], largePic: pic[0], nat: nat))
+                                print(name)
                             }
                         }
+                        print("goinf out for with i=\(i)")
                     }
+                    self.tableView.reloadData()
                 }
                 catch
                 {
