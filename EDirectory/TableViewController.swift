@@ -12,12 +12,25 @@ class TableViewController: UITableViewController {
 
     //MARK: - Variable Declarations
     var employeeRecords = [Employee]()
+    var inactiveQueue:DispatchQueue!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        fetchEmployeeRecords()
-        self.tableView.reloadData()
+        if let queue = inactiveQueue
+        {
+            queue.activate()
+        }
+        
+        let queueX = DispatchQueue(label: "edu.niu.cs.queueX")
+        queueX.sync {
+            fetchEmployeeRecords()
+        }
+        /*
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }*/
+        //self.tableView.reloadData()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -60,12 +73,11 @@ class TableViewController: UITableViewController {
                         {
                             i = i+1
                             //print("coming in")
-                            if let name = item["name"] as? [String:AnyObject]
-                                //let gender = item["gender"] as? String, , let location = item["location"] as? [String], let email = item["email"] as? String, let dob = item["dob"] as? String, let phone = item["phone"] as? String, let cell = item["cell"] as? String, let pic = item["picture"] as? [String], let nat = item["nat"] as? String
+                            if let name = item["name"] as? [String:AnyObject], let gender = item["gender"] as? String, let location = item["location"] as? [String:AnyObject], let email = item["email"] as? String, let dob = item["dob"] as? String, let phone = item["phone"] as? String, let cell = item["cell"] as? String, let pic = item["picture"] as? [String:AnyObject], let nat = item["nat"] as? String
                             {
                                 //print("just")
-                                //self.employeeRecords.append(Employee(gender: gender, name: name, location: location, email: email, dob: dob, phone: phone, cell: cell, thumbnailPic: pic[2], largePic: pic[0], nat: nat))
-                                print(name)
+                                self.employeeRecords.append(Employee(gender: gender, name: name, location: location, email: email, dob: dob, phone: phone, cell: cell, thumbnailPic:pic["thumbnail"] as! String, largePic:pic["large"] as! String, nat: nat))
+                                //print(pic["large"]!, pic["thumbnail"]!)
                             }
                         }
                         print("goinf out for with i=\(i)")
@@ -108,7 +120,7 @@ class TableViewController: UITableViewController {
         let employeeRecord = employeeRecords[indexPath.row]
         
         // Configure the cell...
-        cell.nameLabel.text = "\(employeeRecord.name[0]). \(employeeRecord.name[1]) \(employeeRecord.name[2])"
+        cell.nameLabel.text = "\(employeeRecord.name["title"] as! String). \(employeeRecord.name["first"] as! String) \(employeeRecord.name["last"] as! String)"
         cell.emailLabel.text = employeeRecord.email
         cell.thumbnailPic.image = loadImage(imageUrl: employeeRecord.thumbnailPic)
         
@@ -116,50 +128,42 @@ class TableViewController: UITableViewController {
         return cell
     }
     
-
     /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    override func viewDidAppear(_ animated: Bool) {
+        self.tableView.reloadData()
+    }
+
+    
     }
     */
 
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showDetail"
+        {
+            let detailVC = segue.destination as! DetailViewController
+            
+            //Data to be sent over Segue
+            if let indexPath = self.tableView.indexPathForSelectedRow
+            {
+                let employeeRecord:Employee = employeeRecords[indexPath.row]
+                
+                detailVC.sentThumbnail = employeeRecord.thumbnailPic
+                detailVC.sentName = "\(employeeRecord.name["title"] as! String). \(employeeRecord.name["first"] as! String) \(employeeRecord.name["last"] as! String)"
+                detailVC.sentCell = employeeRecord.cell
+                detailVC.sentPhone = employeeRecord.phone
+                detailVC.sentEmail = employeeRecord.email
+                detailVC.sentAddress = "\(employeeRecord.location["street"] as! String)\n\(employeeRecord.location["city"] as! String)\n\(employeeRecord.location["state"] as! String) - \(employeeRecord.location["postcode"] as! String)\n\(employeeRecord.nat)"
+                detailVC.sentDob = employeeRecord.dob
+                detailVC.sentGender = employeeRecord.gender
+            }
+        }
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
-    */
+    
 
 }
