@@ -64,6 +64,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="EDirectory" id="Uwp-I4-qRd"/>
+                    <connections>
+                        <outlet property="searchTable" destination="vYR-RX-xhh" id="anf-kH-LUz"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oMB-1y-KeX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

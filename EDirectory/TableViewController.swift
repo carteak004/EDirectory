@@ -8,11 +8,18 @@
 
 import UIKit
 
-class TableViewController: UITableViewController {
+class TableViewController: UITableViewController, UISearchBarDelegate {
 
     //MARK: - Variable Declarations
     var employeeRecords = [Employee]()
+    var filteredEmployees = [Employee]() //to store search results
     var inactiveQueue:DispatchQueue!
+    
+    @IBOutlet var searchTable: UITableView!
+    
+    //This is to let the controller know that I am using the same View Controller to show the search results.
+    let searchController = UISearchController(searchResultsController: nil)
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,16 +33,13 @@ class TableViewController: UITableViewController {
         queueX.sync {
             fetchEmployeeRecords()
         }
-        /*
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }*/
-        //self.tableView.reloadData()
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        filteredEmployees = employeeRecords //initialising filteredEmployees object with employeeRecords object
+        
+        //MARK: - Search bar related
+        searchController.searchResultsUpdater = self as? UISearchResultsUpdating       //This will let the class be informed of any text changes in the search bar
+        searchController.dimsBackgroundDuringPresentation = false   //This will not let the view controller get dim when a search is performed.
+        definesPresentationContext = true   //this will make sure that the search bar will not be active in other screens
+        tableView.tableHeaderView = searchController.searchBar  //This will add the search bar to table header view
     }
 
     override func didReceiveMemoryWarning() {
@@ -43,7 +47,9 @@ class TableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    //MARK: - User Defined function for fetching JSON Data
+    //MARK: - User Defined functions
+    
+    //This functions fetches json data and stores it into a employeeRecords object.
     func fetchEmployeeRecords()
     {
         let apiUrl = URL(string: "http://faculty.cs.niu.edu/~krush/ios/edirectory_json") // create URL Variable
@@ -76,13 +82,17 @@ class TableViewController: UITableViewController {
                             if let name = item["name"] as? [String:AnyObject], let gender = item["gender"] as? String, let location = item["location"] as? [String:AnyObject], let email = item["email"] as? String, let dob = item["dob"] as? String, let phone = item["phone"] as? String, let cell = item["cell"] as? String, let pic = item["picture"] as? [String:AnyObject], let nat = item["nat"] as? String
                             {
                                 //print("just")
-                                self.employeeRecords.append(Employee(gender: gender, name: name, location: location, email: email, dob: dob, phone: phone, cell: cell, thumbnailPic:pic["thumbnail"] as! String, largePic:pic["large"] as! String, nat: nat))
+                                self.employeeRecords.append(Employee(gender: gender, name: "\(name["title"] as! String). \(name["first"] as! String) \(name["last"] as! String)", location: location, email: email, dob: dob, phone: phone, cell: cell, thumbnailPic:pic["thumbnail"] as! String, largePic:pic["large"] as! String, nat: nat))
                                 //print(pic["large"]!, pic["thumbnail"]!)
+                                
                             }
                         }
                         print("goinf out for with i=\(i)")
                     }
-                    self.tableView.reloadData()
+                    
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
                 }
                 catch
                 {
@@ -101,6 +111,15 @@ class TableViewController: UITableViewController {
         
         return UIImage(data: data!)!
     }
+    
+    //This functions returns filtered data
+    func filterdContentForSearchText(searchText: String, scope: String = "All")
+    {
+        filteredEmployees = employeeRecords.filter{ item in
+            return item.name.lowercased().contains(searchText.lowercased())
+        }
+        tableView.reloadData()
+    }
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -110,6 +129,12 @@ class TableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
+        
+        // return filteredEmployees' count if search bar is active and text is not null.
+        if searchController.isActive && searchController.searchBar.text != ""
+        {
+            return self.filteredEmployees.count
+        }
         return self.employeeRecords.count
     }
 
@@ -120,7 +145,7 @@ class TableViewController: UITableViewController {
         let employeeRecord = employeeRecords[indexPath.row]
         
         // Configure the cell...
-        cell.nameLabel.text = "\(employeeRecord.name["title"] as! String). \(employeeRecord.name["first"] as! String) \(employeeRecord.name["last"] as! String)"
+        cell.nameLabel.text = employeeRecord.name
         cell.emailLabel.text = employeeRecord.email
         cell.thumbnailPic.image = loadImage(imageUrl: employeeRecord.thumbnailPic)
         
@@ -128,14 +153,6 @@ class TableViewController: UITableViewController {
         return cell
     }
     
-    /*
-    override func viewDidAppear(_ animated: Bool) {
-        self.tableView.reloadData()
-    }
-
-    
-    }
-    */
 
     
     // MARK: - Navigation
@@ -149,14 +166,25 @@ class TableViewController: UITableViewController {
             //Data to be sent over Segue
             if let indexPath = self.tableView.indexPathForSelectedRow
             {
-                let employeeRecord:Employee = employeeRecords[indexPath.row]
+                
+                let employeeRecord:Employee!
+                    
+                if searchController.isActive && searchController.searchBar.text != ""
+                {
+                    employeeRecord = filteredEmployees[indexPath.row]
+                }
+                else
+                {
+                    employeeRecord = employeeRecords[indexPath.row]
+                }
+                
                 
                 detailVC.sentThumbnail = employeeRecord.thumbnailPic
-                detailVC.sentName = "\(employeeRecord.name["title"] as! String). \(employeeRecord.name["first"] as! String) \(employeeRecord.name["last"] as! String)"
+                detailVC.sentName = employeeRecord.name
                 detailVC.sentCell = employeeRecord.cell
                 detailVC.sentPhone = employeeRecord.phone
                 detailVC.sentEmail = employeeRecord.email
-                detailVC.sentAddress = "\(employeeRecord.location["street"] as! String)\n\(employeeRecord.location["city"] as! String)\n\(employeeRecord.location["state"] as! String) - \(employeeRecord.location["postcode"] as! String)\n\(employeeRecord.nat)"
+                detailVC.sentAddress = "\(employeeRecord.location["street"] as! String)\n\(employeeRecord.location["city"] as! String)\n\(employeeRecord.location["state"] as! String) - \(String(describing: employeeRecord.location["postcode"]))\n\(employeeRecord.nat)"
                 detailVC.sentDob = employeeRecord.dob
                 detailVC.sentGender = employeeRecord.gender
             }
