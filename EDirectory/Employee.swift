@@ -19,9 +19,11 @@ class Employee: NSObject {
     var cell:String!
     var largePic:String!
     var thumbnailPic:String!
+    var nameTitle:String!
     var nat:String!
+    var regDate:String!
     
-    init(gender:String!, name:String!, location:[String:AnyObject]!, email:String!, dob:String!, phone:String!, cell:String!, thumbnailPic:String!, largePic:String!, nat:String!) {
+    init(gender:String!, name:String!, location:[String:AnyObject]!, email:String!, dob:String!, phone:String!, cell:String!, thumbnailPic:String!, largePic:String!, nameTitle:String!, nat:String, regDate:String!) {
         self.gender = gender
         self.name = name
         self.largePic = largePic
@@ -31,6 +33,8 @@ class Employee: NSObject {
         self.phone = phone
         self.cell = cell
         self.thumbnailPic = thumbnailPic
+        self.nameTitle = nameTitle
         self.nat = nat
+        self.regDate = regDate
     }
 }

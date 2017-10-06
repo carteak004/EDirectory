@@ -1,14 +1,14 @@
 //
-//  TableViewController.swift
+//  ViewController.swift
 //  EDirectory
 //
-//  Created by Kartheek chintalapati on 29/09/17.
+//  Created by ta on 10/6/17.
 //  Copyright © 2017 Northern Illinois University. All rights reserved.
 //
 
 import UIKit
 
-class TableViewController: UITableViewController, UISearchBarDelegate {
+class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
     //MARK: - Variable Declarations
     var employeeRecords = [Employee]()
@@ -16,13 +16,17 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
     var inactiveQueue:DispatchQueue!
 
     
+    //@IBOutlet weak var searchController: UISearchBar!
+    @IBOutlet weak var tableView: UITableView!
+    
+    
     //This is to let the controller know that I am using the same View Controller to show the search results.
     let searchController = UISearchController(searchResultsController: nil)
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         if let queue = inactiveQueue
         {
             queue.activate()
@@ -35,11 +39,11 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
         filteredEmployees = employeeRecords //initialising filteredEmployees object with employeeRecords object
         
         //MARK: SEARCH BAR RELATED
-        searchController.searchResultsUpdater = self       //This will let the class be informed of any text changes in the search bar
+        searchController.searchResultsUpdater = self as? UISearchResultsUpdating       //This will let the class be informed of any text changes in the search bar
         searchController.dimsBackgroundDuringPresentation = false   //This will not let the view controller get dim when a search is performed.
         definesPresentationContext = true   //this will make sure that the search bar will not be active in other screens
         tableView.tableHeaderView = searchController.searchBar  //This will add the search bar to table header view
-        
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -77,7 +81,7 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
                         //var i=0
                         for item in employeeJson
                         {
-                           // i = i+1
+                            // i = i+1
                             //print("coming in")
                             if let name = item["name"] as? [String:AnyObject], let gender = item["gender"] as? String, let location = item["location"] as? [String:AnyObject], let email = item["email"] as? String, let dob = item["dob"] as? String, let phone = item["phone"] as? String, let cell = item["cell"] as? String, let pic = item["picture"] as? [String:AnyObject], let nat = item["nat"] as? String, let regDate = item["registered"] as? String
                             {
@@ -104,7 +108,7 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
         }
         task.resume()
     }
-
+    
     //Function to load image from URL in a imageView. It takes the url as input and returns UIImage
     func loadImage(imageUrl:String) -> UIImage
     {
@@ -121,27 +125,27 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
         }
         tableView.reloadData()
     }
-
+    
     
     // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         //This will show the search results if the search bar is active and something is typed into it or displays all the cells if no search is performed.
         if searchController.isActive && searchController.searchBar.text != "" {
             return filteredEmployees.count
         }
         return employeeRecords.count
     }
-
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CELL", for: indexPath) as! TableViewCell
-
+        
         let employeeRecord:Employee!
         if searchController.isActive && searchController.searchBar.text != ""
         {
@@ -157,14 +161,14 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
         cell.emailLabel.text = employeeRecord.email
         cell.thumbnailPic.image = loadImage(imageUrl: employeeRecord.thumbnailPic)
         
-
+        
         return cell
     }
     
-
+    
     
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail"
@@ -176,7 +180,7 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
             {
                 
                 let employeeRecord:Employee!
-                    
+                
                 if searchController.isActive && searchController.searchBar.text != ""
                 {
                     employeeRecord = filteredEmployees[indexPath.row]
@@ -202,9 +206,9 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
         // Pass the selected object to the new view controller.
     }
     
-
+    
 }
-/*
+
 /// This class extension allows the table view controller to respond to search bar by implementing UISearchResultsUpdating.
 extension TableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
@@ -212,4 +216,3 @@ extension TableViewController: UISearchResultsUpdating {
     }
 }
 
-*/

@@ -20,6 +20,7 @@ class DetailViewController: UIViewController {
     var sentAddress:String!
     var sentDob:String!
     var sentGender:String!
+    var sentRegDate:String!
     
     //MARK: - Outlets
     @IBOutlet weak var thumbnailView: UIImageView!
@@ -29,6 +30,7 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var emailButtonLabel: UIButton!
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var birthdayButtonLabel: UIButton!
+    @IBOutlet weak var hiredDateButtonLabel: UIButton!
     @IBOutlet weak var genderLabel: UILabel!
     
     //MARK: - Actions
@@ -56,19 +58,23 @@ class DetailViewController: UIViewController {
     @IBAction func birthdayButton(_ sender: UIButton) {
     }
     
-    let mainView = TableViewController()
+    @IBAction func hiredDateButton(_ sender: UIButton) {
+    }
+    
+    let homeView = TableViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         //Loading Labels and Images
-        thumbnailView.image = mainView.loadImage(imageUrl: sentThumbnail)
+        thumbnailView.image = homeView.loadImage(imageUrl: sentThumbnail)
         nameLabel.text = sentName
         cellButtonLabel.setTitle(sentCell, for: .normal)
         phoneButtonLabel.setTitle(sentPhone, for: .normal)
         emailButtonLabel.setTitle(sentEmail, for: .normal)
         addressLabel.text = sentAddress
         birthdayButtonLabel.setTitle(sentDob, for: .normal)
+        hiredDateButtonLabel.setTitle(sentRegDate, for: .normal)
         genderLabel.text = sentGender
         
     }
