@@ -36,7 +36,7 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
         filteredEmployees = employeeRecords //initialising filteredEmployees object with employeeRecords object
         
         //MARK: - Search bar related
-        searchController.searchResultsUpdater = self as? UISearchResultsUpdating       //This will let the class be informed of any text changes in the search bar
+        searchController.searchResultsUpdater = self as UISearchResultsUpdating       //This will let the class be informed of any text changes in the search bar
         searchController.dimsBackgroundDuringPresentation = false   //This will not let the view controller get dim when a search is performed.
         definesPresentationContext = true   //this will make sure that the search bar will not be active in other screens
         tableView.tableHeaderView = searchController.searchBar  //This will add the search bar to table header view
@@ -120,6 +120,7 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
         }
         tableView.reloadData()
     }
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -194,4 +195,13 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
     }
     
 
+}
+
+//This class extension allows the table VC to respond to search bar by implementing UISearchResultsUpdating
+extension TableViewController: UISearchResultsUpdating
+{
+    func updateSearchResults(for searchController: UISearchController)
+    {
+        filterdContentForSearchText(searchText: searchController.searchBar.text!)
+    }
 }
