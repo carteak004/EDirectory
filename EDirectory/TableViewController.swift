@@ -35,11 +35,12 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
         }
         filteredEmployees = employeeRecords //initialising filteredEmployees object with employeeRecords object
         
-        //MARK: - Search bar related
-        searchController.searchResultsUpdater = self as UISearchResultsUpdating       //This will let the class be informed of any text changes in the search bar
+        //MARK: SEARCH BAR RELATED
+        searchController.searchResultsUpdater = self       //This will let the class be informed of any text changes in the search bar
         searchController.dimsBackgroundDuringPresentation = false   //This will not let the view controller get dim when a search is performed.
         definesPresentationContext = true   //this will make sure that the search bar will not be active in other screens
         tableView.tableHeaderView = searchController.searchBar  //This will add the search bar to table header view
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -112,14 +113,14 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
         return UIImage(data: data!)!
     }
     
-    //This functions returns filtered data
-    func filterdContentForSearchText(searchText: String, scope: String = "All")
-    {
-        filteredEmployees = employeeRecords.filter{ item in
+    //This function returns the filtered data
+    func filterContentForSearchText(searchText: String, scope: String = "All") {
+        filteredEmployees = employeeRecords.filter { item in
             return item.name.lowercased().contains(searchText.lowercased())
         }
         tableView.reloadData()
     }
+
     
     // MARK: - Table view data source
 
@@ -129,21 +130,26 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        
-        // return filteredEmployees' count if search bar is active and text is not null.
-        if searchController.isActive && searchController.searchBar.text != ""
-        {
-            return self.filteredEmployees.count
+        //This will show the search results if the search bar is active and something is typed into it or displays all the cells if no search is performed.
+        if searchController.isActive && searchController.searchBar.text != "" {
+            return filteredEmployees.count
         }
-        return self.employeeRecords.count
+        return employeeRecords.count
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CELL", for: indexPath) as! TableViewCell
 
-        let employeeRecord = employeeRecords[indexPath.row]
+        let employeeRecord:Employee!
+        if searchController.isActive && searchController.searchBar.text != ""
+        {
+            employeeRecord = filteredEmployees[indexPath.row]
+        }
+        else
+        {
+            employeeRecord = employeeRecords[indexPath.row]
+        }
         
         // Configure the cell...
         cell.nameLabel.text = employeeRecord.name
@@ -197,11 +203,10 @@ class TableViewController: UITableViewController, UISearchBarDelegate {
 
 }
 
-//This class extension allows the table VC to respond to search bar by implementing UISearchResultsUpdating
-extension TableViewController: UISearchResultsUpdating
-{
-    func updateSearchResults(for searchController: UISearchController)
-    {
-        filterdContentForSearchText(searchText: searchController.searchBar.text!)
+/// This class extension allows the table view controller to respond to search bar by implementing UISearchResultsUpdating.
+extension TableViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        filterContentForSearchText(searchText: searchController.searchBar.text!)
     }
 }
+
