@@ -18,6 +18,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     //@IBOutlet weak var searchController: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     
     //This is to let the controller know that I am using the same View Controller to show the search results.
@@ -25,8 +26,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     
     override func viewDidLoad() {
+        activityIndicator.hidesWhenStopped = true       //hide the activity indicator when it is not animating
+        
         super.viewDidLoad()
-
+        
+        tableView.isHidden = true                       //hide the table view
+        activityIndicator.startAnimating()              //start animating the view
+        
         if let queue = inactiveQueue
         {
             queue.activate()
@@ -38,8 +44,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         filteredEmployees = employeeRecords //initialising filteredEmployees object with employeeRecords object
         
-        //MARK: SEARCH BAR RELATED
-        searchController.searchResultsUpdater = self as? UISearchResultsUpdating       //This will let the class be informed of any text changes in the search bar
+        //MARK: - SEARCH BAR RELATED
+        searchController.searchResultsUpdater = self      //This will let the class be informed of any text changes in the search bar
         searchController.dimsBackgroundDuringPresentation = false   //This will not let the view controller get dim when a search is performed.
         definesPresentationContext = true   //this will make sure that the search bar will not be active in other screens
         tableView.tableHeaderView = searchController.searchBar  //This will add the search bar to table header view
@@ -56,6 +62,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     //This functions fetches json data and stores it into a employeeRecords object.
     func fetchEmployeeRecords()
     {
+        
         let apiUrl = URL(string: "http://faculty.cs.niu.edu/~krush/ios/edirectory_json") // create URL Variable
         let urlRequest = URLRequest(url: apiUrl!)
         
@@ -97,7 +104,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                     }
                     
                     DispatchQueue.main.async {
-                        self.tableView.reloadData()
+                        self.activityIndicator.stopAnimating() //stop animating
+                        self.tableView.isHidden = false        //reveal the table view
+                        self.tableView.reloadData()            //reload the table view
                     }
                 }
                 catch
@@ -108,6 +117,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         task.resume()
     }
+
     
     //Function to load image from URL in a imageView. It takes the url as input and returns UIImage
     func loadImage(imageUrl:String) -> UIImage
@@ -123,9 +133,23 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         filteredEmployees = employeeRecords.filter { item in
             return item.name.lowercased().contains(searchText.lowercased())
         }
-        tableView.reloadData()
+        self.tableView.reloadData()
     }
     
+    
+    //MARK: - Delegate Methods
+    
+    //This function dismisses the keyboard when tapped outside the field
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
+    //This function dismisses the keyboard when the user presses the return key
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        searchController.resignFirstResponder()
+        
+        return true
+    }
     
     // MARK: - Table view data source
     
@@ -210,7 +234,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 }
 
 /// This class extension allows the table view controller to respond to search bar by implementing UISearchResultsUpdating.
-extension TableViewController: UISearchResultsUpdating {
+extension ViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         filterContentForSearchText(searchText: searchController.searchBar.text!)
     }

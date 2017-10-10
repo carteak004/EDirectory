@@ -35,9 +35,28 @@ class DetailViewController: UIViewController {
     
     //MARK: - Actions
     @IBAction func largeImageViewButton(_ sender: UIButton) {
+    
     }
     
     @IBAction func callButton(_ sender: UIButton) {
+        // Create the AlertController and add its actions like button in ActionSheet
+        let actionSheetController = UIAlertController(title: <#T##String?#>, message: <#T##String?#>, preferredStyle: <#T##UIAlertControllerStyle#>)
+        
+        let cancelActionButton = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        let saveActionButton = UIAlertAction(title: "Save", style: .default) { action -> Void in
+            print("Save")
+        }
+        actionSheetController.addAction(saveActionButton)
+        
+        let deleteActionButton = UIAlertAction(title: "Delete", style: .default) { action -> Void in
+            print("Delete")
+        }
+        actionSheetController.addAction(deleteActionButton)
+        self.present(actionSheetController, animated: true, completion: nil)
     }
     
     @IBAction func textButton(_ sender: UIButton) {
@@ -61,7 +80,7 @@ class DetailViewController: UIViewController {
     @IBAction func hiredDateButton(_ sender: UIButton) {
     }
     
-    let homeView = TableViewController()
+    let homeView = ViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
