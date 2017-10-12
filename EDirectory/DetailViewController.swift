@@ -40,22 +40,46 @@ class DetailViewController: UIViewController {
     
     @IBAction func callButton(_ sender: UIButton) {
         // Create the AlertController and add its actions like button in ActionSheet
-        let actionSheetController = UIAlertController(title: <#T##String?#>, message: <#T##String?#>, preferredStyle: <#T##UIAlertControllerStyle#>)
+        let actionSheetController = UIAlertController(title: "📞 Call", message: "", preferredStyle: .actionSheet)
         
         let cancelActionButton = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
             print("Cancel")
         }
         actionSheetController.addAction(cancelActionButton)
         
-        let saveActionButton = UIAlertAction(title: "Save", style: .default) { action -> Void in
-            print("Save")
+        let cellButton = UIAlertAction(title: "Cell: \(sentCell!)", style: .default) { action -> Void in
+            let myURL:NSURL = URL(string: "tel://\(self.sentCell!)")! as NSURL
+            UIApplication.shared.open(myURL as URL, options: [:], completionHandler: nil)
+            
+            // Display the simple alert since we cannot test the above
+            // code on the simulator
+            let alertController = UIAlertController(title: "Calling..", message: "\(self.sentCell!)", preferredStyle: .alert)
+            
+            let dismissButton = UIAlertAction(title: "Dismiss", style: .cancel, handler: {
+                
+                (alert: UIAlertAction!) -> Void in
+            })
+            alertController.addAction(dismissButton)
+            self.present(alertController, animated: true, completion: nil)
         }
-        actionSheetController.addAction(saveActionButton)
+        actionSheetController.addAction(cellButton)
         
-        let deleteActionButton = UIAlertAction(title: "Delete", style: .default) { action -> Void in
-            print("Delete")
+        let phoneButton = UIAlertAction(title: "Phone: \(sentPhone)", style: .default) { action -> Void in
+            let myURL:NSURL = URL(string: "tel://\(self.sentPhone!)")! as NSURL
+            UIApplication.shared.open(myURL as URL, options: [:], completionHandler: nil)
+            
+            // Display the simple alert since we cannot test the above
+            // code on the simulator
+            let alertController = UIAlertController(title: "Calling..", message: "\(self.sentPhone!)", preferredStyle: .alert)
+            
+            let dismissButton = UIAlertAction(title: "Dismiss", style: .cancel, handler: {
+                
+                (alert: UIAlertAction!) -> Void in
+            })
+            alertController.addAction(dismissButton)
+            self.present(alertController, animated: true, completion: nil)
         }
-        actionSheetController.addAction(deleteActionButton)
+        actionSheetController.addAction(phoneButton)
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
