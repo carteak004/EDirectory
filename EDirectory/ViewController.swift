@@ -50,6 +50,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         definesPresentationContext = true   //this will make sure that the search bar will not be active in other screens
         tableView.tableHeaderView = searchController.searchBar  //This will add the search bar to table header view
 
+        
+        
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -136,6 +139,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         self.tableView.reloadData()
     }
     
+    //function to set circular view to an image.
+    func setCircularImage(imageView: UIImageView) {
+        imageView.layer.cornerRadius = imageView.bounds.size.width / 2.0
+        imageView.layer.masksToBounds = true
+    }
     
     //MARK: - Delegate Methods
     
@@ -184,7 +192,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         cell.nameLabel.text = "\(employeeRecord.nameTitle!). \(employeeRecord.name!)"
         cell.emailLabel.text = employeeRecord.email
         cell.thumbnailPic.image = loadImage(imageUrl: employeeRecord.thumbnailPic)
-        
+        setCircularImage(imageView: cell.thumbnailPic)
         
         return cell
     }
@@ -215,10 +223,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 }
                 
                 
-                detailVC.sentThumbnail = employeeRecord.thumbnailPic
+                detailVC.sentLarge = employeeRecord.largePic
                 detailVC.sentName = "\(employeeRecord.nameTitle!). \(employeeRecord.name!)"
-                detailVC.sentCell = employeeRecord.cell
-                detailVC.sentPhone = employeeRecord.phone
+                detailVC.sentCell = "\(employeeRecord.cell!)"
+                detailVC.sentPhone = "\(employeeRecord.phone!)"
                 detailVC.sentEmail = employeeRecord.email
                 detailVC.sentAddress = "\(employeeRecord.location["street"] as! String)\n\(employeeRecord.location["city"] as! String)\n\(employeeRecord.location["state"] as! String) - \(employeeRecord.location["postcode"]!)\n\(employeeRecord.nat!)"
                 detailVC.sentDob = employeeRecord.dob
