@@ -5,7 +5,10 @@
 //  Created by ta on 10/4/17.
 //  Copyright © 2017 Northern Illinois University. All rights reserved.
 //
-
+/************************************************************************************
+ This view gets input from main VC and displays them. This view allows the 
+ functionality to call, text and send an e-mail.
+ ************************************************************************************/
 import UIKit
 import MessageUI
 
@@ -167,7 +170,7 @@ class DetailViewController: UIViewController, MFMailComposeViewControllerDelegat
         let toRecipients = [sentEmail]
         
         mailComposeVC.setToRecipients(toRecipients as? [String])
-        mailComposeVC.setSubject("\(sentName)")
+        mailComposeVC.setSubject("\(sentName!)")
         mailComposeVC.setMessageBody("App Name: KC-EDirectory; Author Name: Kartheek Chintalapati; Z-ID: z1788719", isHTML: false)
         
         //present the view controller modally

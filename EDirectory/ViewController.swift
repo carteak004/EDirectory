@@ -6,6 +6,12 @@
 //  Copyright © 2017 Northern Illinois University. All rights reserved.
 //
 
+/*****************************************************************************************
+ This swift file contains the table view for displaying data and a search bar to search 
+ for records. This file also contains code for parsing JSON data in the background queue. 
+ When selected on a particular cell, this view will pass the details to detail view.
+ *****************************************************************************************/
+
 import UIKit
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {

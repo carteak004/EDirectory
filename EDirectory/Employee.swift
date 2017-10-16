@@ -5,7 +5,9 @@
 //  Created by Kartheek chintalapati on 29/09/17.
 //  Copyright © 2017 Northern Illinois University. All rights reserved.
 //
-
+/************************************************************************************
+ This file defines the model of the app.
+ ************************************************************************************/
 import UIKit
 
 class Employee: NSObject {
