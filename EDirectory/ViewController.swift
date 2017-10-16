@@ -22,7 +22,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var inactiveQueue:DispatchQueue!
 
     
-    //@IBOutlet weak var searchController: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
@@ -55,10 +54,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         searchController.dimsBackgroundDuringPresentation = false   //This will not let the view controller get dim when a search is performed.
         definesPresentationContext = true   //this will make sure that the search bar will not be active in other screens
         tableView.tableHeaderView = searchController.searchBar  //This will add the search bar to table header view
-
-        
-        
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -94,14 +89,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                     
                     //fetch required data
                     if let employeeJson = jsonObject["results"] as? [[String:AnyObject]] {
-                        //var i=0
+                        
                         for item in employeeJson
                         {
-                            // i = i+1
-                            //print("coming in")
                             if let name = item["name"] as? [String:AnyObject], let gender = item["gender"] as? String, let location = item["location"] as? [String:AnyObject], let email = item["email"] as? String, let dob = item["dob"] as? String, let phone = item["phone"] as? String, let cell = item["cell"] as? String, let pic = item["picture"] as? [String:AnyObject], let nat = item["nat"] as? String, let regDate = item["registered"] as? String
                             {
-                                //print("just")
                                 self.employeeRecords.append(Employee(gender: gender, name: "\(name["first"]!) \(name["last"]!)", location: location, email: email, dob: dob, phone: phone, cell: cell, thumbnailPic:pic["thumbnail"] as! String, largePic:pic["large"] as! String, nameTitle:"\(name["title"]!)", nat:nat, regDate:regDate))
                             }
                         }
@@ -167,7 +159,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // MARK: - Table view data source
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
     
@@ -239,11 +230,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 detailVC.sentRegDate = employeeRecord.regDate
             }
         }
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
     }
-    
-    
 }
 
 /// This class extension allows the table view controller to respond to search bar by implementing UISearchResultsUpdating.

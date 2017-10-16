@@ -29,7 +29,6 @@ class DetailViewController: UIViewController, MFMailComposeViewControllerDelegat
     
     //MARK: - Outlets
     @IBOutlet weak var thumbnailView: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var cellButtonLabel: UIButton!
     @IBOutlet weak var phoneButtonLabel: UIButton!
     @IBOutlet weak var emailButtonLabel: UIButton!
@@ -145,8 +144,8 @@ class DetailViewController: UIViewController, MFMailComposeViewControllerDelegat
     func callANumber(number: String)
     {
         let stringURL = "tel://\(number)"
-        //let myURL:NSURL = URL(string: "tel://\(number)")! as NSURL
-        let myURL:NSURL = URL(string: stringURL.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!)! as NSURL
+        //let myURL:NSURL = URL(string: "tel://\(number)")! as NSURL    //this is the normal implementation of URL
+        let myURL:NSURL = URL(string: stringURL.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!)! as NSURL    //This should be used if the incoming string is not URL compatiable. (like spaces)
         UIApplication.shared.open(myURL as URL, options: [:], completionHandler: nil)
         
         // Display the simple alert since we cannot test the above
@@ -184,25 +183,12 @@ class DetailViewController: UIViewController, MFMailComposeViewControllerDelegat
     func changeDate(dateString: String) -> String
     {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss" //Your date format
-        //dateFormatter.timeZone = TimeZone(abbreviation: "GMT+0:00") //Current time zone
-        let date = dateFormatter.date(from: dateString) //according to date format your date string
-        //print(date ?? "") //Convert String to Date
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss" //date format
+        let date = dateFormatter.date(from: dateString) //date string according to date format
         
-        dateFormatter.dateFormat = "MMM d, yyyy" //Your New Date format as per requirement change it own
+        dateFormatter.dateFormat = "MMM d, yyyy" //New Date format as per requirement change it own
         let newDate = dateFormatter.string(from: date!) //pass Date here
-        //print(newDate) //New formatted Date string
         
         return newDate
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
