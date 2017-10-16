@@ -103,13 +103,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                             {
                                 //print("just")
                                 self.employeeRecords.append(Employee(gender: gender, name: "\(name["first"]!) \(name["last"]!)", location: location, email: email, dob: dob, phone: phone, cell: cell, thumbnailPic:pic["thumbnail"] as! String, largePic:pic["large"] as! String, nameTitle:"\(name["title"]!)", nat:nat, regDate:regDate))
-                                //print(pic["large"]!, pic["thumbnail"]!)
-                                //print("\(name["first"]!) \(name["last"]!)")
-                                //print(self.employeeRecords[0].name)
-                                
                             }
                         }
-                        //print("goinf out for with i=\(i)")
+                        self.employeeRecords.sort
+                            {
+                                return $0.name < $1.name
+                        }
                     }
                     
                     DispatchQueue.main.async {
