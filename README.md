@@ -15,3 +15,6 @@ The home view of the app shows a table view with the photo, full name and the e-
 9. Gender
 
 User can place a call to Cell or Phone, text to Cell or Phone and e-mail to the e-mail Id from the app itself. There is also a info button which shows information about the app and the author.
+
+
+_This project is done for a course requirement of NIU_
